@@ -7,8 +7,15 @@ authDb.pragma("foreign_keys = ON");
 
 export const auth = betterAuth({
   database: authDb,
-  secret: process.env.BETTER_AUTH_SECRET ?? "dev-secret-change-in-production-min-32-chars",
-  baseURL: process.env.BETTER_AUTH_URL ?? "http://localhost:3000",
+  secret:
+    process.env.BETTER_AUTH_SECRET ??
+    process.env.SESSION_SECRET ??
+    "dev-secret-change-in-production-min-32-chars",
+  baseURL:
+    process.env.BETTER_AUTH_URL ??
+    (process.env.REPLIT_DEV_DOMAIN
+      ? `https://${process.env.REPLIT_DEV_DOMAIN}`
+      : "http://localhost:5000"),
   emailAndPassword: {
     enabled: true,
     minPasswordLength: 8,
@@ -28,8 +35,14 @@ export const auth = betterAuth({
         required: false,
         defaultValue: "UTC",
       },
+      theme: {
+        type: "string",
+        required: false,
+        defaultValue: "system",
+      },
     },
   },
 });
 
 export type Session = typeof auth.$Infer.Session;
+export type AuthUser = typeof auth.$Infer.Session.user;
