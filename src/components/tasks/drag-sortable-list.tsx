@@ -1,5 +1,5 @@
 "use client";
-import { useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import {
   DndContext,
   closestCenter,
@@ -90,10 +90,11 @@ export function DragSortableList({ tasks: initialTasks, listName, timezone, show
     });
   }
 
-  // Sync with server updates
-  if (initialTasks.length !== tasks.length || initialTasks.some((t, i) => tasks[i]?.id !== t.id)) {
-    setTasks(initialTasks);
-  }
+  useEffect(() => {
+    if (initialTasks.length !== tasks.length || initialTasks.some((t, i) => tasks[i]?.id !== t.id)) {
+      setTasks(initialTasks);
+    }
+  }, [initialTasks, tasks]);
 
   return (
     <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
